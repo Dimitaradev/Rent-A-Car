@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Rent_A_Car.Models;
+using Rent_A_Car.ViewModels;
 using System.Diagnostics;
 
 namespace Rent_A_Car.Controllers

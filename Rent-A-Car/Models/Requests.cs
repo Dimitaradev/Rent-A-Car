@@ -1,8 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using Rent_A_Car.Models;
 
-namespace Rent_A_Car.Data
+namespace Rent_A_Car.Models
 {
     public class Requests
     {

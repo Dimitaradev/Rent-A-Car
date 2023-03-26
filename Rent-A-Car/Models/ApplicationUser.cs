@@ -5,6 +5,8 @@ namespace Rent_A_Car.Models
 {
     public class ApplicationUser : IdentityUser
     {
+        
+
         [Required]
         [MaxLength(50)]
         public string FirstName { get; set; }
