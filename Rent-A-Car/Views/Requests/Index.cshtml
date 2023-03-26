@@ -30,13 +30,9 @@
     <tbody>
 @foreach (var item in Model) {
         <tr>
-                @using (Html.BeginForm("ApproveRejectRequest", "Requests", new { requestId = item.Id }))
-                {
-            <button type="submit" name="status" value="Approved">Approve</button>
-            <button type="submit" name="status" value="Rejected">Reject</button>
-                }
+                
             <td>
-                @Html.DisplayFor(modelItem => item.Car.Brand)
+                @Html.DisplayFor(modelItem => item.Car.Id)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.User.Id)
@@ -51,6 +47,11 @@
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
                 <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    @using (Html.BeginForm("ApproveRejectRequest", "Requests", new { requestId = item.Id }))
+                    {
+                        <button type="submit" name="status" value="Approved">Approve</button>
+                        <button type="submit" name="status" value="Rejected">Reject</button>
+                    }
             </td>
         </tr>
 }

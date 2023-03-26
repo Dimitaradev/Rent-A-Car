@@ -55,7 +55,7 @@ namespace Rent_A_Car.Controllers
         // POST: Users/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-       
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("UserName,Password,FirstName,LastName,PIN,PhoneNumber,Email")] ApplicationUser Users)
@@ -90,20 +90,23 @@ namespace Rent_A_Car.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, ApplicationUser user)
+        public async Task<IActionResult> Edit(ApplicationUser user)
         {
-
-            if (id != user.Id)
+            var editedUser = await _context.Users.FindAsync(user.Id);
+            if (editedUser != null)
             {
-                return NotFound();
-            }
+                if (ModelState.IsValid)
+                {
+                    editedUser.LastName = user.LastName; editedUser.FirstName=user.FirstName;
+                    editedUser.Email = user.Email;
+                    editedUser.UserName = user.UserName;
+                    editedUser.PhoneNumber = user.PhoneNumber;
+                    editedUser.PIN = user.PIN;
 
-            if (ModelState.IsValid)
-            {
-                _context.Update(user);
-                await _context.SaveChangesAsync();
+                    _context.Update(editedUser);
+                    await _context.SaveChangesAsync();
+                }
             }
-
             return RedirectToAction("Index");
         }
 

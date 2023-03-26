@@ -1,12 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+//using System.Web.Mvc;
+using Microsoft.AspNetCore.Identity;
 using Rent_A_Car.Data;
 using Rent_A_Car.Models;
+using Rent_A_Car.ViewModels;
+using System.Security.Principal;
 
 namespace Rent_A_Car.Controllers
 {
@@ -49,8 +54,10 @@ namespace Rent_A_Car.Controllers
         // GET: Requests/Create
         public IActionResult Create()
         {
-            ViewData["CarID"] = new SelectList(_context.Cars, "Id", "Brand");
-            ViewData["UserID"] = new SelectList(_context.Users, "Id", "Id");
+            ViewData["CarID"] = new SelectList(_context.Cars, "Id", "Id");
+            var name = User.Identity?.Name;
+            var user = _context.Users.FirstOrDefault(x => x.Email == name);
+            ViewData["UserID"] = user?.Id;
             return View();
         }
 
@@ -59,17 +66,41 @@ namespace Rent_A_Car.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,CarID,UserID,RequestStart,RequestEnd")] Requests requests)
+        public async Task<IActionResult> Create(RequestsViewModel requestModel)
         {
-            if (ModelState.IsValid)
+            var allRequestedCars = _context.Requests.Where(x => x.Id == requestModel.CarID).ToList();
+            var isBookedCar = allRequestedCars.Any(x => x.RequestStart <= requestModel.RequestEnd && x.RequestStart >= requestModel.RequestStart);
+
+            if (!isBookedCar)
             {
-                _context.Add(requests);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+
+                if (ModelState.IsValid)
+                {
+                    var request = new Requests();
+                    request.RequestStart = requestModel.RequestStart;
+                    request.RequestEnd = requestModel.RequestEnd;
+                    var name = User.Identity?.Name;
+                    var user = _context.Users.FirstOrDefault(x => x.Email == name);
+                    //if(user == null)
+                    //{
+
+                    //}
+                    request.UserID = user.Id;
+                    request.CarID = requestModel.CarID;
+
+                    _context.Add(request);
+                    await _context.SaveChangesAsync();
+
+                }
+                return RedirectToAction("Index");
             }
-            ViewData["CarID"] = new SelectList(_context.Cars, "Id", "Brand", requests.CarID);
-            ViewData["UserID"] = new SelectList(_context.Users, "Id", "Id", requests.UserID);
-            return View(requests);
+            else
+            {
+                return View("Error");
+            }
+
+            //ViewData["CarID"] = new SelectList(_context.Cars, "Id", "Id", requestModel.CarID);
+
         }
 
         // GET: Requests/Edit/5
@@ -161,14 +192,14 @@ namespace Rent_A_Car.Controllers
             {
                 _context.Requests.Remove(requests);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool RequestsExists(int id)
         {
-          return (_context.Requests?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Requests?.Any(e => e.Id == id)).GetValueOrDefault();
         }
 
         public ActionResult ApproveRejectRequest(int requestId)
