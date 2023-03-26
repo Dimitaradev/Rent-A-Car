@@ -9,6 +9,7 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+<h2>Not Approved</h2>
 <table class="table">
     <thead>
         <tr>
@@ -49,8 +50,12 @@
                 <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
                     @using (Html.BeginForm("ApproveRejectRequest", "Requests", new { requestId = item.Id }))
                     {
-                        <button type="submit" name="status" value="Approved">Approve</button>
+                        if(User.IsInRole("Administrator"))
+                        {
+                            <button type="submit" name="status" value="Approved">Approve</button>
                         <button type="submit" name="status" value="Rejected">Reject</button>
+                        }
+                        
                     }
             </td>
         </tr>

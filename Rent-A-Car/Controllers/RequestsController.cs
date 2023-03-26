@@ -18,17 +18,28 @@ namespace Rent_A_Car.Controllers
     public class RequestsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public RequestsController(ApplicationDbContext context)
+        public RequestsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Requests
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Requests.Include(r => r.Car).Include(r => r.User);
-            return View(await applicationDbContext.ToListAsync());
+            if(User.IsInRole("Administrator"))
+            {
+                var applicationDbContext = _context.Requests.Include(r => r.Car).Include(r => r.User);
+                return View(await applicationDbContext.ToListAsync());
+            }
+
+            else
+            {
+                var applicationDbContext = _context.Requests.Where(r => r.UserID == GetUserId()).Include(r => r.Car).Include(r => r.User);
+                return View(await applicationDbContext.ToListAsync());
+            }
         }
 
         // GET: Requests/Details/5
@@ -55,9 +66,7 @@ namespace Rent_A_Car.Controllers
         public IActionResult Create()
         {
             ViewData["CarID"] = new SelectList(_context.Cars, "Id", "Id");
-            var name = User.Identity?.Name;
-            var user = _context.Users.FirstOrDefault(x => x.Email == name);
-            ViewData["UserID"] = user?.Id;
+            ViewData["UserID"] = GetUserId();
             return View();
         }
 
@@ -68,8 +77,8 @@ namespace Rent_A_Car.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(RequestsViewModel requestModel)
         {
-            var allRequestedCars = _context.Requests.Where(x => x.Id == requestModel.CarID).ToList();
-            var isBookedCar = allRequestedCars.Any(x => x.RequestStart <= requestModel.RequestEnd && x.RequestStart >= requestModel.RequestStart);
+            var allRequestedCars = _context.Requests.Where(x => x.CarID == requestModel.CarID).ToList();
+            var isBookedCar = allRequestedCars.Any(x => x.RequestEnd >= requestModel.RequestStart && x.RequestStart <= requestModel.RequestStart);
 
             if (!isBookedCar)
             {
@@ -79,13 +88,8 @@ namespace Rent_A_Car.Controllers
                     var request = new Requests();
                     request.RequestStart = requestModel.RequestStart;
                     request.RequestEnd = requestModel.RequestEnd;
-                    var name = User.Identity?.Name;
-                    var user = _context.Users.FirstOrDefault(x => x.Email == name);
-                    //if(user == null)
-                    //{
-
-                    //}
-                    request.UserID = user.Id;
+                   
+                    request.UserID = GetUserId();
                     request.CarID = requestModel.CarID;
 
                     _context.Add(request);
@@ -221,5 +225,14 @@ namespace Rent_A_Car.Controllers
                 return RedirectToAction("Index", "Requests");
             }
         }
+
+        private string GetUserId()
+        {
+            var name = User.Identity?.Name;
+            var user = _context.Users.FirstOrDefault(x => x.Email == name);
+
+            return user.Id;
+        }
+
     }
 }
