@@ -24,6 +24,8 @@ namespace Rent_A_Car.Models
 
         [Required]
         public DateTime RequestEnd { get; set; }
+
+        public bool IsApproved { get; set; }
     }
 
 }

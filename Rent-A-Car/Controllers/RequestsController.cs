@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-//using System.Web.Mvc;
 using Microsoft.AspNetCore.Identity;
 using Rent_A_Car.Data;
 using Rent_A_Car.Models;
@@ -77,9 +76,10 @@ namespace Rent_A_Car.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(RequestsViewModel requestModel)
         {
+            var now = DateTime.Now;
             var allRequestedCars = _context.Requests.Where(x => x.CarID == requestModel.CarID).ToList();
-            var isBookedCar = allRequestedCars.Any(x => x.RequestEnd >= requestModel.RequestStart && x.RequestStart <= requestModel.RequestStart);
-
+            var isBookedCar = allRequestedCars.Any(x => x.RequestEnd >= requestModel.RequestStart && x.RequestStart <= requestModel.RequestStart || x.RequestEnd>=requestModel.RequestEnd && x.RequestStart <=requestModel.RequestEnd);
+            
             if (!isBookedCar)
             {
 
@@ -209,7 +209,8 @@ namespace Rent_A_Car.Controllers
         public ActionResult ApproveRejectRequest(int requestId)
         {
             // Retrieve the request from the database based on the provided request id
-            Requests request = _context.Requests.Find(requestId);
+
+            var request = _context.Requests.FirstOrDefault(x => x.Id == requestId);
 
             if (request == null)
             {
@@ -218,6 +219,7 @@ namespace Rent_A_Car.Controllers
             }
             else
             {
+                request.IsApproved= true;
                 // Save changes to the database
                 _context.SaveChanges();
 

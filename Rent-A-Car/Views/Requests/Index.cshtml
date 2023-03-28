@@ -9,7 +9,8 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
-<h2>Not Approved</h2>
+
+
 <table class="table">
     <thead>
         <tr>
@@ -29,36 +30,114 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-                
-            <td>
-                @Html.DisplayFor(modelItem => item.Car.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.User.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.RequestStart)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.RequestEnd)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                    @using (Html.BeginForm("ApproveRejectRequest", "Requests", new { requestId = item.Id }))
+        @if (User.IsInRole("Administrator"))
+        {
+            @foreach (var item in Model)
+            {
+                <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Car.Id)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.User.Id)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.RequestStart)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.RequestEnd)
+                        </td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                            <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                            <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                            @using (Html.BeginForm("ApproveRejectRequest", "Requests", new { requestId = item.Id }))
+                            {
+                                if (User.IsInRole("Administrator"))
+                                {
+                                    <button type="submit" name="status" value="Approved">Approve</button>
+                                    <button type="submit" name="status" value="Rejected">Reject</button>
+                                }
+
+                            }
+                        </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <h2>Approved</h2>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    @if (item.IsApproved)
                     {
-                        if(User.IsInRole("Administrator"))
-                        {
-                            <button type="submit" name="status" value="Approved">Approve</button>
-                        <button type="submit" name="status" value="Rejected">Reject</button>
-                        }
-                        
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Car.Id)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.User.Id)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.RequestStart)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.RequestEnd)
+                        </td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                            <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                            <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                            @using (Html.BeginForm("ApproveRejectRequest", "Requests", new { requestId = item.Id }))
+                            {
+                                if (User.IsInRole("Administrator"))
+                                {
+                                    <button type="submit" name="status" value="Approved">Approve</button>
+                                    <button type="submit" name="status" value="Rejected">Reject</button>
+                                }
+
+                            }
+                        </td>
                     }
-            </td>
+                </tr>
+            }
+             <h2>Not Approved</h2>
+        @foreach (var item in Model)
+        {
+        <tr>
+        @if (!item.IsApproved)
+        {
+        <td>
+        @Html.DisplayFor(modelItem => item.Car.Id)
+        </td>
+        <td>
+        @Html.DisplayFor(modelItem => item.User.Id)
+        </td>
+        <td>
+        @Html.DisplayFor(modelItem => item.RequestStart)
+        </td>
+        <td>
+        @Html.DisplayFor(modelItem => item.RequestEnd)
+        </td>
+        <td>
+        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+        @using (Html.BeginForm("ApproveRejectRequest", "Requests", new { requestId = item.Id }))
+        {
+        if (User.IsInRole("Administrator"))
+        {
+        <button type="submit" name="status" value="Approved">Approve</button>
+        <button type="submit" name="status" value="Rejected">Reject</button>
+        }
+
+        }
+        </td>
+        }
         </tr>
-}
+        }
+        }
+
+
     </tbody>
 </table>
