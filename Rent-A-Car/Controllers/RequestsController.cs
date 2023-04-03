@@ -80,7 +80,8 @@ namespace Rent_A_Car.Controllers
             var allRequestedCars = _context.Requests.Where(x => x.CarID == requestModel.CarID).ToList();
             var isBookedCar = allRequestedCars.Any(x => x.RequestEnd >= requestModel.RequestStart && x.RequestStart <= requestModel.RequestStart || x.RequestEnd>=requestModel.RequestEnd && x.RequestStart <=requestModel.RequestEnd);
             
-            if (!isBookedCar)
+
+            if (!isBookedCar && requestModel.RequestStart <= now)
             {
 
                 if (ModelState.IsValid)
@@ -132,31 +133,45 @@ namespace Rent_A_Car.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,CarID,UserID,RequestStart,RequestEnd")] Requests requests)
         {
+            var now = DateTime.Now;
+            var allRequestedCars = _context.Requests.Where(x => x.CarID == requests.CarID).ToList();
+            var isBookedCar = allRequestedCars.Any(x => x.RequestEnd >= requests.RequestStart && x.RequestStart <= requests.RequestStart || x.RequestEnd >= requests.RequestEnd && x.RequestStart <= requests.RequestEnd);
+
             if (id != requests.Id)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+
+
+            if(!isBookedCar && requests.RequestStart <= now) 
             {
-                try
+                if (ModelState.IsValid)
                 {
-                    _context.Update(requests);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!RequestsExists(requests.Id))
+                    try
                     {
-                        return NotFound();
+                        _context.Update(requests);
+                        await _context.SaveChangesAsync();
                     }
-                    else
+                    catch (DbUpdateConcurrencyException)
                     {
-                        throw;
+                        if (!RequestsExists(requests.Id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
                     }
+                    return RedirectToAction(nameof(Index));
                 }
-                return RedirectToAction(nameof(Index));
             }
+            else
+            {
+                return View("Error");
+            }
+           
             ViewData["CarID"] = new SelectList(_context.Cars, "Id", "Brand", requests.CarID);
             ViewData["UserID"] = new SelectList(_context.Users, "Id", "Id", requests.UserID);
             return View(requests);
