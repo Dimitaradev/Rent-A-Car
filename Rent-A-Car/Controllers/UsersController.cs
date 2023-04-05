@@ -60,7 +60,8 @@ namespace Rent_A_Car.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("UserName,Password,FirstName,LastName,PIN,PhoneNumber,Email")] ApplicationUser Users)
         {
-            if (ModelState.IsValid)
+           
+            if (ModelState.IsValid )
             {
                 _context.Add(Users);
                 await _context.SaveChangesAsync();
