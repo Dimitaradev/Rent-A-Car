@@ -1,4 +1,5 @@
-﻿@model IEnumerable<Rent_A_Car.Models.Requests>
+﻿@using Rent_A_Car.ViewModels;
+@model RequestsIndexViewModel
 
 @{
     ViewData["Title"] = "Index";
@@ -7,125 +8,156 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" button="text-success">Create New</a>
 </p>
 
 
-<table class="table">
-    
-    <tbody>
         @if (User.IsInRole("Administrator"))
         {
+            <table class="table">
+                <tbody>
         <thead>
             <tr>
                 <th>
-                        @Html.DisplayNameFor(model => model.Car)
+                    Car
                 </th>
                 <th>
-                        @Html.DisplayNameFor(model => model.User)
+                    User
                 </th>
                 <th>
-                        @Html.DisplayNameFor(model => model.RequestStart)
+                    Request Start
                 </th>
                 <th>
-                        @Html.DisplayNameFor(model => model.RequestEnd)
+                    Request End
                 </th>
                 <th></th>
             </tr>
         </thead>
-            @foreach (var item in Model)
+            @foreach (var item in Model.AllRequests)
             {
-                <tr> 
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Car.Id)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.User.Id)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.RequestStart)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.RequestEnd)
-                        </td>
-                        <td>
-                            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                            <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                            <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                            @using (Html.BeginForm("ApproveRejectRequest", "Requests", new { requestId = item.Id }))
+            <tr>
+                <td>
+                        @Html.DisplayFor(modelItem => item.Car.Id)
+                </td>
+                <td>
+                        @Html.DisplayFor(modelItem => item.User.Id)
+                </td>
+                <td>
+                        @Html.DisplayFor(modelItem => item.RequestStart)
+                </td>
+                <td>
+                        @Html.DisplayFor(modelItem => item.RequestEnd)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                        @if (item.IsApproved)
+                        {
+                        <span> Approved</span>
+                        }
+                        else
+                        {
+                            using (Html.BeginForm("ApproveRejectRequest", "Requests", new { requestId = item.Id }))
                             {
-                                    <button type="submit" name="status" value="Approved">Approve</button>
-                                    <button type="submit" name="status" value="Rejected">Reject</button>
+                            <button type="submit" name="status" value="Approved">Approve</button>
+                            <button type="submit" name="status" value="Rejected">Reject</button>
                             }
-                        </td>
-                </tr>
+                        }
+
+                </td>
+            </tr>
             }
+                </tbody>
+            </table>
+        
         }
         else
         {
-            <h2>Approved</h2>
+        <h2>Approved</h2>
+        <table class="table">
+            <tbody>
         <thead>
             <tr>
                 <th>
-                        @Html.DisplayNameFor(model => model.Car)
+                    Car
                 </th>
                 <th>
-                        @Html.DisplayNameFor(model => model.User)
+                    User
                 </th>
                 <th>
-                        @Html.DisplayNameFor(model => model.RequestStart)
+                    Request Start
                 </th>
                 <th>
-                        @Html.DisplayNameFor(model => model.RequestEnd)
+                    Request End
                 </th>
-                <th></th>
             </tr>
         </thead>
-            @foreach (var item in Model)
+            @foreach (var item in Model.ApprovedRequests)
             {
-                <tr>
-                    @if (item.IsApproved)
-                    {
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Car.Id)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.User.Id)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.RequestStart)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.RequestEnd)
-                        </td>
-                        <td>
-                            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                            <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                            <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                            
-                        </td>
-                    }
-                </tr>
-            }      
-            <h2>Not Approved</h2>
-                <thead>
             <tr>
-        <th>
-                        @Html.DisplayNameFor(model => model.Car)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.User)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.RequestStart)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.RequestEnd)
-                    </th>
-                    <th></th>
-                </tr>
-            </thead>
+                <td>
+                        @Html.DisplayFor(modelItem => item.Car.Id)
+                </td>
+                <td>
+                        @Html.DisplayFor(modelItem => item.User.Id)
+                </td>
+                <td>
+                        @Html.DisplayFor(modelItem => item.RequestStart)
+                </td>
+                <td>
+                        @Html.DisplayFor(modelItem => item.RequestEnd)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+
+                </td>
+            </tr>
+            }
+            </tbody>
+        </table>
+        <h2>Not Approved</h2>
+        <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Car
+                </th>
+                <th>
+                    User
+                </th>
+                <th>
+                    Request Start
+                </th>
+                <th>
+                    Request End
+                </th>
+            </tr>
+        </thead>
+        @foreach (var item in Model.UnpprovedRequests)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Car.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.User.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RequestStart)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RequestEnd)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="text-danger">Delete</a>
+
+                </td>
+            </tr>
         }
-            
-    </tbody>
-</table>
+        </table>
+        }

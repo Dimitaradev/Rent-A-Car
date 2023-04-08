@@ -29,27 +29,19 @@ namespace Rent_A_Car.Controllers
         // GET: Requests
         public async Task<IActionResult> Index()
         {
-            _approvedViewModel.All.AddRange(_approvedViewModel.approved);
-            _approvedViewModel.All.AddRange(_approvedViewModel.unapproved);
-            if(_context.Requests.All(x => x.IsApproved))
+            RequestsIndexViewModel data = new RequestsIndexViewModel();
+            if (User.IsInRole("Administrator"))
             {
-                _approvedViewModel.approved.Add(_context.Requests.FirstOrDefault(x => x.IsApproved));
-            }
-            else
-            {
-                _approvedViewModel.unapproved.Add(_context.Requests.FirstOrDefault(x => !x.IsApproved));
-            }
-
-            if(User.IsInRole("Administrator"))
-            {
-                var applicationDbContext = _context.Requests.Include(r => r.Car).Include(r => r.User);
-                return View(await applicationDbContext.ToListAsync());
+                data.AllRequests = await _context.Requests.Include(r => r.Car).Include(r => r.User).ToListAsync();
+                return View(data);
             }
 
             else
             {
-                var applicationDbContext = _context.Requests.Where(r => r.UserID == GetUserId()).Include(r => r.Car).Include(r => r.User);
-                return View(await applicationDbContext.ToListAsync());
+                var userRequests = _context.Requests.Where(r => r.UserID == GetUserId()).Include(r => r.Car).Include(r => r.User);
+                data.ApprovedRequests = await userRequests.Where(x => x.IsApproved).ToListAsync();
+                data.UnpprovedRequests = await userRequests.Where(x => !x.IsApproved).ToListAsync();
+                return View(data);
             }
         }
 

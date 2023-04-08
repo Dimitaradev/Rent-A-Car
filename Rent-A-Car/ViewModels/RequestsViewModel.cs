@@ -2,7 +2,6 @@
 {
     public class RequestsViewModel
     {
-
         public int CarID { get; set; }
 
         public string UserID { get; set; }
