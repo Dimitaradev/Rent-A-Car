@@ -142,6 +142,7 @@ namespace Rent_A_Car.Areas.Identity.Pages.Account
                 user.PhoneNumber = Input.PhoneNumber;
                 user.PIN = Input.PIN;
                 user.PhoneNumber = Input.PhoneNumber;
+                user.UserName = Input.UserName;
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
