@@ -1,0 +1,38 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.badge-info-custom {
+    /*background-color: #17a2b8; /* Bootstrap info background color */
+    color: #17a2b8; /* White text color */
+}
+
+.navbar-dark {
+    background-color: #343a40 !important; /* Dark background color */
+}
+
+    .navbar-dark .navbar-nav .nav-link,
+    .navbar-dark .navbar-brand {
+        color: #fff !important; /* White text color */
+    }
+
+/* Example of dark theme styles */
+.dark-theme {
+    background-color: #333;
+    color: #fff;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}

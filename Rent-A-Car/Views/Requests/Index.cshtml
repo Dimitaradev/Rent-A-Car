@@ -1,0 +1,117 @@
+﻿@model RequestsIndexViewModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New</a>
+</p>
+
+@if (User.IsInRole("Administrator"))
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Car</th>
+                <th>User</th>
+                <th>Request Start</th>
+                <th>Request End</th>
+                <th>Actions</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.AllRequests)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.Car.Id)</td>
+                    <td>@Html.DisplayFor(modelItem => item.User.LastName)</td>
+                    <td>@Html.DisplayFor(modelItem => item.RequestStart)</td>
+                    <td>@Html.DisplayFor(modelItem => item.RequestEnd)</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Details</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
+                    </td>
+                    <td>
+                        @if (item.IsApproved)
+                        {
+                            <span class="badge-info-custom">Approved</span>
+                        }
+                        else
+                        {
+                            using (Html.BeginForm("ApproveRejectRequest", "Requests", new { requestId = item.Id }))
+                            {
+                                <button type="submit" class="btn btn-sm btn-success" name="status" value="Approved">Approve</button>
+                                <button type="submit" class="btn btn-sm btn-danger" name="status" value="Rejected">Reject</button>
+                            }
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <h2>Approved</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Car</th>
+                <th>User</th>
+                <th>Request Start</th>
+                <th>Request End</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.ApprovedRequests)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.Car.Id)</td>
+                    <td>@Html.DisplayFor(modelItem => item.User.LastName)</td>
+                    <td>@Html.DisplayFor(modelItem => item.RequestStart)</td>
+                    <td>@Html.DisplayFor(modelItem => item.RequestEnd)</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Details</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <h2>Not Approved</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Car</th>
+                <th>User</th>
+                <th>Request Start</th>
+                <th>Request End</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.UnpprovedRequests)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.Car.Id)</td>
+                    <td>@Html.DisplayFor(modelItem => item.User.LastName)</td>
+                    <td>@Html.DisplayFor(modelItem => item.RequestStart)</td>
+                    <td>@Html.DisplayFor(modelItem => item.RequestEnd)</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Details</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

@@ -1,0 +1,27 @@
+﻿@using Microsoft.AspNetCore.Identity;
+@using Rent_A_Car.Models;
+@inject SignInManager<ApplicationUser> SignInManager;
+@inject UserManager<ApplicationUser> UserManager;
+@{
+    ViewData["Title"] = "Home Page";
+
+    string username = User.Identity.Name;
+    if (username != null && username.Contains("@"))
+    {
+        username = username.Substring(0, username.IndexOf("@"));
+    }
+}
+
+<div class="container text-center mt-5">
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <h1 class="display-4">Welcome, @username!</h1>
+        <hr class="my-4" />
+        <p class="lead">Our rent a car company wishes you an exciting experience!</p>
+    }
+    else
+    {
+        <h1 class="display-4">Welcome!</h1>
+        <p class="lead">Please sign in to access more features.</p>
+    }
+</div>

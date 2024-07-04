@@ -1,0 +1,71 @@
+﻿@model Rent_A_Car.Models.Cars
+
+@{
+    ViewData["Title"] = "Create Car";
+}
+
+<h1 class="display-4 text-center my-4">Create a New Car</h1>
+
+<div class="container">
+    <h4 class="text-secondary">Car Details</h4>
+    <hr />
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <form asp-action="Create" class="needs-validation" novalidate>
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                <div class="form-group">
+                    <label asp-for="Brand" class="control-label font-weight-bold"></label>
+                    <input asp-for="Brand" class="form-control" placeholder="Enter brand" />
+                    <span asp-validation-for="Brand" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Model" class="control-label font-weight-bold"></label>
+                    <input asp-for="Model" class="form-control" placeholder="Enter model" />
+                    <span asp-validation-for="Model" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Year" class="control-label font-weight-bold"></label>
+                    <input asp-for="Year" class="form-control" placeholder="Enter year" />
+                    <span asp-validation-for="Year" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="SeatCount" class="control-label font-weight-bold"></label>
+                    <input asp-for="SeatCount" class="form-control" placeholder="Enter seat count" />
+                    <span asp-validation-for="SeatCount" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Description" class="control-label font-weight-bold"></label>
+                    <textarea asp-for="Description" class="form-control" placeholder="Enter description" rows="3"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="PricePerDay" class="control-label font-weight-bold"></label>
+                    <input asp-for="PricePerDay" class="form-control" placeholder="Enter price per day" />
+                    <span asp-validation-for="PricePerDay" class="text-danger"></span>
+                </div>
+
+                <div class="form-group text-center">
+                    <input type="submit" value="Create" class="btn btn-primary btn-lg" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row justify-content-center mt-4">
+        <div class="col-md-8 text-center">
+            <a asp-action="Index" class="btn btn-secondary btn-lg">Back to List</a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
